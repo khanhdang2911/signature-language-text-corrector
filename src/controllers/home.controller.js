@@ -1,6 +1,10 @@
 /** @format */
 
 import connection from '../config/database.js'
+import dotenv from 'dotenv'
+import OpenAI from 'openai'
+
+dotenv.config()
 const getAllHistory = async (req, res) => {
 	try {
 		const [rows, fields] = await connection.query('select * from histories')
@@ -97,4 +101,28 @@ const updateTextVoice = async (req, res) => {
 		})
 	}
 }
-export { getAllHistory, createTextVoice, deleteTextVoice, updateTextVoice }
+
+const getTextCorrector = async (req, res) => {
+	try {
+		const openai = new OpenAI({
+			apiKey: process.env.API_KEY,
+			// organization: process.env.Organization_ID,
+			// project: process.env.Project_ID,
+		})
+		const completion = await openai.chat.completions.create({
+			messages: [{ role: 'user', content: 'Change the sentence "My name is K H A N H" into a complete and meaningful sentence.' }],
+			model: 'gpt-3.5-turbo',
+		})
+
+		return res.status(200).json({
+			success: true,
+			message: completion.choices[0],
+		})
+	} catch (error) {
+		return res.status(500).json({
+			success: false,
+			message: error,
+		})
+	}
+}
+export { getAllHistory, createTextVoice, deleteTextVoice, updateTextVoice, getTextCorrector }

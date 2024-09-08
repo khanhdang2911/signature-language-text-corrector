@@ -5,6 +5,7 @@ import dotenv from 'dotenv'
 import connection from './config/database.js'
 import router from './routes/index.js'
 import bodyParser from 'body-parser'
+import cors from 'cors'
 dotenv.config()
 
 const app = express()
@@ -14,6 +15,8 @@ const PORT = process.env.PORT || 9999
 //config app
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
+app.use(cors())
+
 //route
 app.use('/', router)
 
