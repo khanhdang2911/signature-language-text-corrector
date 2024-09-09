@@ -2,8 +2,6 @@
 
 import connection from '../config/database.js'
 import dotenv from 'dotenv'
-import { GoogleGenerativeAI } from '@google/generative-ai'
-import OpenAI from 'openai'
 
 dotenv.config()
 const getAllHistory = async (req, res) => {
@@ -40,7 +38,7 @@ const createTextVoice = async (req, res) => {
 		await connection.query('insert into histories(text_voice, date_insert) values (?,?)', [data.text_voice, formatDate])
 		return res.status(200).json({
 			success: true,
-			message: 'Ok',
+			message: data.text_voice,
 		})
 	} catch (error) {
 		return res.status(500).json({
@@ -103,54 +101,4 @@ const updateTextVoice = async (req, res) => {
 	}
 }
 
-// const getTextCorrector = async (req, res) => {
-// 	try {
-// 		const openai = new OpenAI({
-// 			apiKey: process.env.API_KEY,
-// 		})
-
-// 		const completion = await openai.chat.completions.create({
-// 			messages: [{ role: 'user', content: 'Change the sentence "My name is K H A N H" into a complete and meaningful sentence.' }],
-// 			model: 'gpt-3.5-turbo',
-// 			max_tokens: 100,
-// 			temperature: 0.5,
-// 			top_p: 1,
-// 			frequency_penalty: 0,
-// 			presence_penalty: 0,
-// 		})
-
-// 		return res.status(200).json({
-// 			success: true,
-// 			message: completion.choices[0],
-// 		})
-// 	} catch (error) {
-// 		return res.status(500).json({
-// 			success: false,
-// 			message: error,
-// 		})
-// 	}
-// }
-const getTextCorrector = async (req, res) => {
-	try {
-		const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY)
-		const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
-
-		const prompt = `
-			I will give the input as a sentence, from which you will combine it into a complete sentence, for example, if I give the sentence: My name is K H A N H, you will combine it into My name is Khanh
-			Thís is my sentence:${req.body.text_voice}
-		`
-
-		const result = await model.generateContent(prompt)
-		console.log(result.response.text())
-		return res.status(200).json({
-			success: true,
-			message: result.response.text(),
-		})
-	} catch (error) {
-		return res.status(500).json({
-			success: false,
-			message: error,
-		})
-	}
-}
-export { getAllHistory, createTextVoice, deleteTextVoice, updateTextVoice, getTextCorrector }
+export { getAllHistory, createTextVoice, deleteTextVoice, updateTextVoice }
