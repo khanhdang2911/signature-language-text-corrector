@@ -7,7 +7,7 @@ dotenv.config()
 const connection = mysql.createPool({
 	host: 'localhost',
 	user: 'root',
-	database: 'signature_language',
+	database: 'signature_lang',
 	password: process.env.DB_PASSWORD,
 })
 
